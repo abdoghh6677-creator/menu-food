@@ -1,10 +1,9 @@
 import React, { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, Routes, Route, Link, useLocation } from "react-router-dom";
-import { Store as StoreIcon, LogOut, LayoutDashboard, ShoppingBag, UtensilsCrossed, FileText, Settings, Tag, AlertTriangle, KeyRound, Users, Package } from "lucide-react";
+import { Store as StoreIcon, LogOut, LayoutDashboard, ShoppingBag, UtensilsCrossed, FileText, Settings, Tag, AlertTriangle, KeyRound, Users } from "lucide-react";
 import RestaurantHome from "./RestaurantHome";
 import Orders from "./Orders";
 import Menu from "./Menu";
-import Inventory from "./Inventory";
 import Reports from "./Reports";
 import RestaurantSettings from "./RestaurantSettings";
 import Promotions from "./Promotions";
@@ -116,7 +115,6 @@ const RestaurantDashboard: React.FC = () => {
     { path: "/restaurant", icon: LayoutDashboard, label: "الرئيسية" },
     { path: "/restaurant/orders", icon: ShoppingBag, label: "الطلبات" },
     { path: "/restaurant/menu", icon: UtensilsCrossed, label: "المنيو" },
-    { path: "/restaurant/inventory", icon: Package, label: "المخزون" },
     { path: "/restaurant/reports", icon: FileText, label: "التقارير" },
     { path: "/restaurant/promotions", icon: Tag, label: "العروض" },
     { path: "/restaurant/settings", icon: Settings, label: "الإعدادات" },
@@ -259,7 +257,6 @@ const RestaurantDashboard: React.FC = () => {
           <Route index element={<RestaurantHome />} />
           <Route path="orders" element={<Orders />} />
           <Route path="menu" element={<Menu />} />
-          <Route path="inventory" element={<Inventory />} />
           <Route path="reports" element={<Reports />} />
           <Route path="promotions" element={<Promotions />} />
           <Route path="settings" element={<RestaurantSettings />} />
