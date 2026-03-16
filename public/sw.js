@@ -2,7 +2,7 @@
 // Service Worker - FoodOrder PWA + Push Notifications
 // =====================================================
 
-const CACHE_VERSION = 'v3';
+const CACHE_VERSION = 'v4';
 const STATIC_CACHE = `foodorder-static-${CACHE_VERSION}`;
 const DYNAMIC_CACHE = `foodorder-dynamic-${CACHE_VERSION}`;
 
