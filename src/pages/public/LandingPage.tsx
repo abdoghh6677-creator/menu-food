@@ -29,7 +29,7 @@ const LandingPage: React.FC = () => {
     },
     {
       name: "ستارتر",
-      price: "299",
+      price: "350",
       period: "شهرياً",
       color: "border-accent ring-2 ring-accent",
       badge: "الأكثر شيوعاً",
@@ -38,8 +38,8 @@ const LandingPage: React.FC = () => {
     },
     {
       name: "برو",
-      price: "599",
-      period: "شهرياً",
+      price: "2500",
+      period: "سنويا",
       color: "border-gray-200",
       btnClass: "bg-gray-800 text-white hover:bg-gray-700",
       features: ["كل مميزات ستارتر", "فروع متعددة", "تحليلات متقدمة", "تخصيص الألوان", "دعم أولوية"],
