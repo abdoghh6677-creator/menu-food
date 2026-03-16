@@ -16,7 +16,7 @@ export const formatCurrency = (amount: number | undefined | null): string => {
 export const generateSlug = (name: string): string => {
   return name
     .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/[^a-z0-9ا-ي\s-]+/g, "-")
     .replace(/^-+|-+$/g, "")
     .substring(0, 50);
 };

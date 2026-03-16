@@ -351,15 +351,15 @@ RETURNS TEXT
 LANGUAGE plpgsql
 AS $$
 BEGIN
-    RETURN regexp_replace(
+    RETURN trim(both '-' from regexp_replace(
         regexp_replace(
             lower(name),
-            '[^a-z0-9\s-]',
+            '[^a-z0-9ا-ي\s-]',
             '', 'g'
         ),
         '\s+',
         '-', 'g'
-    );
+    ));
 END;
 $$;
 
@@ -417,6 +417,9 @@ BEGIN
 
     -- إنشاء slug فريد
     v_slug := generate_slug(p_restaurant_name);
+    IF v_slug = '' OR v_slug IS NULL THEN
+        v_slug := 'restaurant-' || EXTRACT(epoch FROM NOW())::TEXT;
+    END IF;
     IF EXISTS (SELECT 1 FROM restaurants WHERE slug = v_slug) THEN
         v_slug := v_slug || '-' || EXTRACT(epoch FROM NOW())::TEXT;
     END IF;
