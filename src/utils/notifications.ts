@@ -109,7 +109,7 @@ export const sendOrderViaWhatsApp = (order: any, restaurantName?: string, whatsa
   let message = `🔔 *طلب جديد - إشعار للمطعم*\n\n`;
   message += `🏪 *المطعم:* ${restaurantName || "مطعمنا"}\n`;
   message += `📋 *رقم الطلب:* #${order.order_number}\n`;
-  message += `📅 *التاريخ:* ${new Date(order.created_at).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' })}\n`;
+  message += `📅 *التاريخ:* ${new Date(new Date(order.created_at).getTime() + 4 * 60 * 60 * 1000).toLocaleString('ar-EG')}\n`;
   message += `📍 *نوع الطلب:* ${orderTypeLabels[order.order_type] || order.order_type}\n`;
 
   if (order.table_number) {
