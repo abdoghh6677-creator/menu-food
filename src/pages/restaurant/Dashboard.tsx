@@ -11,7 +11,7 @@ import Promotions from "./Promotions";
 import ChangePassword from "./ChangePassword";
 import { getSession, clearSession, renewSession, getSessionExpiry } from "../../utils/session";
 import { subscribeToOrders } from "../../services/restaurantService";
-import { playNotificationBeep } from "../../utils/notifications";
+import { playNotificationBeep, notifyNewOrder } from "../../utils/notifications";
 
 const WARNING_MINUTES = 5; // تحذير 5 دقائق قبل الانتهاء
 
@@ -22,7 +22,9 @@ const RestaurantDashboard: React.FC = () => {
   const [showWarning, setShowWarning] = useState(false);
   const [minutesLeft, setMinutesLeft] = useState(0);
   const [pendingOrdersCount, setPendingOrdersCount] = useState(0);
+  const [newOrderNotification, setNewOrderNotification] = useState<string | null>(null);
   const prevOrderCountRef = useRef(0);
+  const prevOrderIdsRef = useRef<Set<string>>(new Set());
 
   const handleLogout = useCallback(() => {
     clearSession();
@@ -80,12 +82,26 @@ const RestaurantDashboard: React.FC = () => {
       const pendingCount = orders.filter(order => order.status === "pending").length;
       setPendingOrdersCount(pendingCount);
 
-      // إشعار صوتي لطلب جديد
-      if (pendingCount > prevOrderCountRef.current && prevOrderCountRef.current > 0) {
+      // كشف الطلبات الجديدة
+      const newPendingOrders = orders.filter(
+        (order) => order.status === "pending" && !prevOrderIdsRef.current.has(order.id)
+      );
+
+      if (newPendingOrders.length > 0 && prevOrderIdsRef.current.size > 0) {
+        // صوت الإشعار
         playNotificationBeep();
+        // Push notification لكل طلب جديد
+        newPendingOrders.forEach((order) => {
+          notifyNewOrder(order.order_number, order.order_type);
+        });
+        // إشعار بصري في لوحة التحكم
+        setNewOrderNotification(`وصل ${newPendingOrders.length} طلب جديد!`);
+        // إخفاء الإشعار بعد 5 ثوانٍ
+        setTimeout(() => setNewOrderNotification(null), 5000);
       }
 
-      prevOrderCountRef.current = pendingCount;
+      // تحديث قائمة الـ IDs المعروفة
+      prevOrderIdsRef.current = new Set(orders.map((o) => o.id));
     });
 
     return () => {
@@ -119,6 +135,19 @@ const RestaurantDashboard: React.FC = () => {
           </div>
           <button onClick={renewSession} className="bg-white/20 hover:bg-white/30 px-3 py-1 rounded-lg text-sm font-bold transition-colors">
             تجديد الجلسة
+          </button>
+        </div>
+      )}
+
+      {/* إشعار الطلبات الجديدة */}
+      {newOrderNotification && (
+        <div className="fixed top-16 left-4 right-4 z-40 bg-accent text-white px-4 py-3 rounded-lg shadow-lg flex items-center justify-between gap-3 animate-bounce">
+          <div className="flex items-center gap-2">
+            <ShoppingBag className="w-5 h-5 flex-shrink-0" />
+            <span className="text-sm font-semibold">{newOrderNotification}</span>
+          </div>
+          <button onClick={() => setNewOrderNotification(null)} className="text-white/80 hover:text-white">
+            ✕
           </button>
         </div>
       )}

@@ -11,6 +11,31 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
   return result === "granted";
 };
 
+/** إشعار صوتي */
+export const playNotificationSound = (): void => {
+  try {
+    // إنشاء صوت beep بسيط باستخدام AudioContext
+    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.frequency.setValueAtTime(800, audioContext.currentTime); // تردد
+    oscillator.type = 'sine';
+
+    gainNode.gain.setValueAtTime(0.3, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + 0.5);
+
+    oscillator.start(audioContext.currentTime);
+    oscillator.stop(audioContext.currentTime + 0.5);
+  } catch (error) {
+    // fallback: لا شيء
+    console.warn('Audio not supported');
+  }
+};
+
 /** إرسال إشعار محلي عبر Service Worker */
 export const sendLocalNotification = async (options: {
   title: string;
@@ -35,7 +60,7 @@ export const sendLocalNotification = async (options: {
   }
 };
 
-/** إشعار طلب جديد */
+/** إشعار طلب جديد مع صوت */
 export const notifyNewOrder = async (orderNumber: string, orderType: string): Promise<void> => {
   const typeLabels: Record<string, string> = {
     qr: "داخل المطعم",
@@ -44,6 +69,11 @@ export const notifyNewOrder = async (orderNumber: string, orderType: string): Pr
     table: "طاولة",
   };
   const label = typeLabels[orderType] || orderType;
+
+  // تشغيل الصوت
+  playNotificationSound();
+
+  // إرسال الإشعار
   await sendLocalNotification({
     title: `🔔 طلب جديد - #${orderNumber}`,
     body: `نوع الطلب: ${label} — اضغط للعرض`,

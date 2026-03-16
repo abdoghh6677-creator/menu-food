@@ -10,8 +10,11 @@ import type { StaffPermissions } from "../utils/session";
 // Subscribe to restaurant's orders with real-time updates
 export const subscribeToOrders = (
   restaurantId: string,
-  callback: (orders: Order[]) => void
+  callback: (orders: Order[]) => void,
+  onNewOrder?: (order: Order) => void
 ) => {
+  let previousOrderCount = 0;
+
   const fetchOrders = async () => {
     const { data, error } = await supabase
       .from("orders")
@@ -20,6 +23,15 @@ export const subscribeToOrders = (
       .order("created_at", { ascending: false });
 
     if (!error && data) {
+      // تحقق من طلبات جديدة
+      if (data.length > previousOrderCount && previousOrderCount > 0) {
+        // طلب جديد
+        const newOrders = data.slice(0, data.length - previousOrderCount);
+        newOrders.forEach(order => {
+          if (onNewOrder) onNewOrder(order);
+        });
+      }
+      previousOrderCount = data.length;
       callback(data);
     }
   };
