@@ -88,6 +88,7 @@ const RestaurantDashboard: React.FC = () => {
       );
 
       if (newPendingOrders.length > 0 && prevOrderIdsRef.current.size > 0) {
+        console.log('New orders detected:', newPendingOrders);
         // صوت الإشعار
         playNotificationBeep();
         // Push notification لكل طلب جديد
