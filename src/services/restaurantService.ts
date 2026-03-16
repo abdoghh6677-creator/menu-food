@@ -54,7 +54,16 @@ export const subscribeToOrders = (
     )
     .subscribe();
 
-  return subscription;
+  // Fallback polling every 10 seconds
+  const pollingInterval = setInterval(fetchOrders, 10000);
+
+  // Return object with unsubscribe method to clean up both
+  return {
+    unsubscribe: () => {
+      subscription.unsubscribe();
+      clearInterval(pollingInterval);
+    }
+  };
 };
 
 // Update order items and notes

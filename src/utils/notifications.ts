@@ -2,6 +2,29 @@
 // إشعارات الطلبات الجديدة - صوتية + Push
 // =====================================================
 
+// Shared AudioContext for all beep functions
+let sharedAudioContext: AudioContext | null = null;
+
+const getAudioContext = (): AudioContext => {
+  if (!sharedAudioContext) {
+    sharedAudioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+  }
+  return sharedAudioContext;
+};
+
+const unlockAudioContext = async (): Promise<void> => {
+  const ctx = getAudioContext();
+  if (ctx.state === 'suspended') {
+    await ctx.resume();
+  }
+};
+
+// Unlock AudioContext on first user interaction
+if (typeof document !== 'undefined') {
+  document.addEventListener('click', unlockAudioContext, { once: true });
+  document.addEventListener('touchstart', unlockAudioContext, { once: true });
+}
+
 /** طلب إذن الإشعارات */
 export const requestNotificationPermission = async (): Promise<boolean> => {
   if (!("Notification" in window)) return false;
@@ -12,10 +35,15 @@ export const requestNotificationPermission = async (): Promise<boolean> => {
 };
 
 /** إشعار صوتي */
-export const playNotificationSound = (): void => {
+export const playNotificationSound = async (): Promise<void> => {
   try {
-    // إنشاء صوت beep بسيط باستخدام AudioContext
-    const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const audioContext = getAudioContext();
+    
+    // استئناف السياق إذا كان معلقاً
+    if (audioContext.state === 'suspended') {
+      await audioContext.resume();
+    }
+    
     const oscillator = audioContext.createOscillator();
     const gainNode = audioContext.createGain();
 
@@ -71,7 +99,7 @@ export const notifyNewOrder = async (orderNumber: string, orderType: string): Pr
   const label = typeLabels[orderType] || orderType;
 
   // تشغيل الصوت
-  playNotificationSound();
+  await playNotificationSound();
 
   // إرسال الإشعار
   await sendLocalNotification({
@@ -167,9 +195,15 @@ export const sendOrderViaWhatsApp = (order: any, restaurantName?: string, whatsa
 };
 
 /** صوت الإشعار */
-export const playNotificationBeep = (): void => {
+export const playNotificationBeep = async (): Promise<void> => {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = getAudioContext();
+    
+    // استئناف السياق إذا كان معلقاً
+    if (ctx.state === 'suspended') {
+      await ctx.resume();
+    }
+    
     const playBeep = (freq: number, start: number, duration: number) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -192,9 +226,15 @@ export const playNotificationBeep = (): void => {
 };
 
 /** صوت تأكيد (للقبول أو الإكمال) */
-export const playSuccessBeep = (): void => {
+export const playSuccessBeep = async (): Promise<void> => {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = getAudioContext();
+    
+    // استئناف السياق إذا كان معلقاً
+    if (ctx.state === 'suspended') {
+      await ctx.resume();
+    }
+    
     const playBeep = (freq: number, start: number, duration: number) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();
@@ -216,9 +256,15 @@ export const playSuccessBeep = (): void => {
 };
 
 /** صوت تحذير (للإلغاء) */
-export const playWarningBeep = (): void => {
+export const playWarningBeep = async (): Promise<void> => {
   try {
-    const ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+    const ctx = getAudioContext();
+    
+    // استئناف السياق إذا كان معلقاً
+    if (ctx.state === 'suspended') {
+      await ctx.resume();
+    }
+    
     const playBeep = (freq: number, start: number, duration: number) => {
       const osc = ctx.createOscillator();
       const gain = ctx.createGain();

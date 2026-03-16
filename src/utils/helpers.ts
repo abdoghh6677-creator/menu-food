@@ -60,6 +60,7 @@ export const calculateOrderTotals = (items: any[]) => {
  */
 export const formatDateTime = (dateString: string): string => {
   const date = new Date(dateString);
+  date.setHours(date.getHours() + 2);
   return new Intl.DateTimeFormat("en-IN", {
     day: "2-digit",
     month: "short",
