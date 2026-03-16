@@ -135,7 +135,7 @@ const Orders: React.FC = () => {
   <div class="center">
     <div class="big bold">🍽️ طلب جديد</div>
     <div class="title">#${order.order_number}</div>
-    <div>${new Date(order.created_at).toLocaleString('ar-EG')}</div>
+    <div>${new Date(order.created_at).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' })}</div>
   </div>
   <div class="line"></div>
   <div class="row"><span class="bold">نوع الطلب:</span><span>${orderTypeLabels[order.order_type] || order.order_type}</span></div>
@@ -202,7 +202,7 @@ const Orders: React.FC = () => {
   </div>
 
   <div class="order-info">
-    <div><strong>الوقت:</strong> ${new Date(order.created_at).toLocaleString('ar-EG')}</div>
+    <div><strong>الوقت:</strong> ${new Date(order.created_at).toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' })}</div>
     <div><strong>النوع:</strong> ${orderTypeLabels[order.order_type] || order.order_type}</div>
     ${order.table_number ? `<div><strong>الطاولة:</strong> ${order.table_number}</div>` : ""}
     <div><strong>الحالة:</strong> ${statusLabels[order.status] || order.status}</div>
@@ -230,7 +230,7 @@ const Orders: React.FC = () => {
   ` : ""}
 
   <div class="footer">
-    <div>تم إنشاء الفاتورة في ${new Date().toLocaleString('ar-EG')}</div>
+    <div>تم إنشاء الفاتورة في ${new Date().toLocaleString('ar-EG', { timeZone: 'Africa/Cairo' })}</div>
     <div style="margin-top: 5px; font-weight: bold;">مطبخ ${restaurantName}</div>
   </div>
 
@@ -333,7 +333,7 @@ const Orders: React.FC = () => {
         })
         .join(" | ");
 
-      const date = new Date(order.created_at).toLocaleString("ar-EG");
+      const date = new Date(order.created_at).toLocaleString("ar-EG", { timeZone: 'Africa/Cairo' });
 
       return [
         order.order_number,
